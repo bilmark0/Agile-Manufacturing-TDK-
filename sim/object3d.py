@@ -16,6 +16,10 @@ class Object3D:
         self.error_applier = ErrorApplier()
 
     def place_object_rnd(self, error_range):
+        # clear all
+        bpy.ops.object.select_all(action='SELECT')
+        bpy.ops.object.delete(use_global=False)
+
         """Randomly place the object within the scene."""
         placement = random.randint(-error_range, error_range), random.randint(-error_range, error_range), 0
         
