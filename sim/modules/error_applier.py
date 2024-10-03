@@ -3,6 +3,7 @@ import random
 import math
 
 class ErrorApplier:
+
     def apply_error(self, obj, error_type):
         """Applies an error to the object based on the specified error type."""
         if error_type == 0:  # Example: Coloring random faces
@@ -31,18 +32,6 @@ class ErrorApplier:
         
         
         if error_type == 1: # Generating chamfer on a random edge
-            def boolean_diff(self, diff):
-                bool_mod = self.modifiers.new(self.name+' ', 'BOOLEAN')
-                bool_mod.operation = 'DIFFERENCE'
-                bool_mod.object = diff
-                bpy.ops.object.modifier_apply(modifier=bool_mod.name)
-            
-            def rotate_obj(self):
-                self.rotation_euler.x = math.radians(random.randrange(0,360,90))
-                self.rotation_euler.y = math.radians(random.randrange(0,360,90))
-                self.rotation_euler.z = math.radians(random.randrange(0,360))
-                self.ops.object.transform_apply(location=False, rotation=True, scale=False)
-                
             def cutter_cube():#Generates a cube to the desired spot
                 r = 0.25 + random.randrange(3, 10)/100
                 rot_angle = math.radians(random.randrange(45,90))
@@ -61,10 +50,49 @@ class ErrorApplier:
             
             bpy.context.view_layer.objects.active = obj
             
-            boolean_diff(obj, cube)
+            self.boolean_diff(obj, cube)
             bpy.data.objects.remove(cube)
             
-            rotate_obj(obj)
+            self.rotate_obj(obj)
+
+        if error_type == 2: # Generating a V shaped cut on one of the surfaces
+            def cutter_cube():#Generates a cube to the desired spot
+                rot_angle = math.radians(random.randrange(0,91))
+                bpy.ops.mesh.primitive_cube_add(size = 0.5, location = (0,0,0.5))
+                cube = bpy.context.active_object
+                cube.location.z += cube.dimensions.z * random.randrange(63,69)/100
+                cube.location.x += random.randrange(0,20)/100
+                cube.rotation_euler.y = math.radians(45)
+                cube.rotation_euler.z = rot_angle
+                cube.scale.y *= 2
+                bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+                return cube
+
+            cube = cutter_cube()
+            bpy.context.view_layer.objects.active = obj
+
+            self.boolean_diff(obj, cube)
+            bpy.data.objects.remove(cube)
+            self.rotate_obj(obj)
+
         else:
             print("Unsupported error type.")
             return None
+    
+    def boolean_diff(self, obj, diff):
+        """Applies a boolean difference modifier between obj and diff."""
+        bool_mod = obj.modifiers.new(obj.name + '_bool', 'BOOLEAN')
+        bool_mod.operation = 'DIFFERENCE'
+        bool_mod.solver = 'FAST'
+        bool_mod.object = diff
+        bpy.context.view_layer.objects.active = obj
+        bpy.ops.object.modifier_apply(modifier=bool_mod.name)
+
+    def rotate_obj(self, obj):
+        """Applies random rotation to the object."""
+        obj.rotation_euler.x = math.radians(random.randrange(0, 360, 90))
+        obj.rotation_euler.y = math.radians(random.randrange(0, 360, 90))
+        obj.rotation_euler.z = math.radians(random.randrange(0, 360))
+        bpy.context.view_layer.objects.active = obj
+        bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+    
