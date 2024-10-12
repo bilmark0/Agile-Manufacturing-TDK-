@@ -1,0 +1,111 @@
+Material: Dark Plastic
+Nodes:
+- Node Name: Layer Weight
+  Type: LAYER_WEIGHT
+  Input: Blend (Value: 0.30000001192092896)
+  Input: Normal (Value: <bpy_float[3], NodeSocketVector.default_value>)
+  Output: Fresnel
+  Output: Facing
+- Node Name: ColorRamp.001
+  Type: VALTORGB
+  Input: Fac (Value: 0.5)
+  Output: Color
+  Output: Alpha
+- Node Name: Material Output
+  Type: OUTPUT_MATERIAL
+  Input: Surface (No default value)
+  Input: Volume (No default value)
+  Input: Displacement (Value: <bpy_float[3], NodeSocketVector.default_value>)
+  Input: Thickness (Value: 0.0)
+- Node Name: Math.002
+  Type: MATH
+  Input: Value (Value: 0.5)
+  Input: Value (Value: 1.0)
+  Input: Value (Value: 0.5)
+  Output: Value
+- Node Name: Math.001
+  Type: MATH
+  Input: Value (Value: 0.5)
+  Input: Value (Value: 150.0)
+  Input: Value (Value: 0.5)
+  Output: Value
+- Node Name: Math
+  Type: MATH
+  Input: Value (Value: 0.5)
+  Input: Value (Value: 0.5)
+  Input: Value (Value: 0.5)
+  Output: Value
+- Node Name: Separate RGB
+  Type: SEPARATE_COLOR
+  Input: Color (Value: <bpy_float[4], NodeSocketColor.default_value>)
+  Output: Red
+  Output: Green
+  Output: Blue
+- Node Name: Noise Texture
+  Type: TEX_NOISE
+  Input: Vector (Value: <bpy_float[3], NodeSocketVector.default_value>)
+  Input: W (Value: 0.0)
+  Input: Scale (Value: 100.0)
+  Input: Detail (Value: 2.0)
+  Input: Roughness (Value: 0.5)
+  Input: Lacunarity (Value: 2.0)
+  Input: Distortion (Value: 0.0)
+  Output: Fac
+  Output: Color
+- Node Name: Math.005
+  Type: MATH
+  Input: Value (Value: 0.5)
+  Input: Value (Value: 0.009999999776482582)
+  Input: Value (Value: 0.5)
+  Output: Value
+- Node Name: Math.006
+  Type: MATH
+  Input: Value (Value: 0.5)
+  Input: Value (Value: 0.5)
+  Input: Value (Value: 0.5)
+  Output: Value
+- Node Name: Math.003
+  Type: MATH
+  Input: Value (Value: 0.5)
+  Input: Value (Value: 0.30000001192092896)
+  Input: Value (Value: 0.5)
+  Output: Value
+- Node Name: Mix Shader
+  Type: MIX_SHADER
+  Input: Fac (Value: 0.5)
+  Input: Shader (No default value)
+  Input: Shader (No default value)
+  Output: Shader
+- Node Name: Diffuse BSDF
+  Type: BSDF_DIFFUSE
+  Input: Color (Value: <bpy_float[4], NodeSocketColor.default_value>)
+  Input: Roughness (Value: 0.0)
+  Input: Normal (Value: <bpy_float[3], NodeSocketVector.default_value>)
+  Input: Weight (Value: 0.0)
+  Output: BSDF
+- Node Name: Displacement
+  Type: DISPLACEMENT
+  Input: Height (Value: 0.0)
+  Input: Midlevel (Value: 0.0)
+  Input: Scale (Value: 0.10000000149011612)
+  Input: Normal (Value: <bpy_float[3], NodeSocketVector.default_value>)
+  Output: Displacement
+- Node Name: Glossy BSDF
+  Type: BSDF_GLOSSY
+  Input: Color (Value: <bpy_float[4], NodeSocketColor.default_value>)
+  Input: Roughness (Value: 0.44721361994743347)
+  Input: Anisotropy (Value: 0.0)
+  Input: Rotation (Value: 0.0)
+  Input: Normal (Value: <bpy_float[3], NodeSocketVector.default_value>)
+  Input: Tangent (Value: <bpy_float[3], NodeSocketVector.default_value>)
+  Input: Weight (Value: 0.0)
+  Output: BSDF
+- Node Name: Texture Coordinate
+  Type: TEX_COORD
+  Output: Generated
+  Output: Normal
+  Output: UV
+  Output: Object
+  Output: Camera
+  Output: Window
+  Output: Reflection

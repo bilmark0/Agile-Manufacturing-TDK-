@@ -1,0 +1,38 @@
+import bpy
+
+# Define the material name you want to extract (replace with your material name)
+material_name = "Dark Plastic"
+
+# Get the material by name
+material = bpy.data.materials.get(material_name)
+
+if material and material.use_nodes:
+    # Open the Shader Editor nodes
+    nodes = material.node_tree.nodes
+    
+    # Set the path to save the file
+    file_path = r"C:\Agile-Manufacturing-TDK-\sim\modules\textures\PLA\extracted_material.txt"
+    
+    # Prepare the text file for saving material data
+    with open(file_path, "w") as file:
+        file.write(f"Material: {material.name}\n")
+        file.write("Nodes:\n")
+        
+        # Loop through the nodes to extract information
+        for node in nodes:
+            file.write(f"- Node Name: {node.name}\n")
+            file.write(f"  Type: {node.type}\n")
+            if hasattr(node, 'inputs'):
+                for input in node.inputs:
+                    file.write(f"  Input: {input.name}")
+                    if hasattr(input, 'default_value'):  # Check if default_value exists
+                        file.write(f" (Value: {input.default_value})\n")
+                    else:
+                        file.write(" (No default value)\n")
+            if hasattr(node, 'outputs'):
+                for output in node.outputs:
+                    file.write(f"  Output: {output.name}\n")
+                    
+    print(f"Material data extracted and saved to {file_path}")
+else:
+    print(f"Material '{material_name}' not found or does not use nodes.")
