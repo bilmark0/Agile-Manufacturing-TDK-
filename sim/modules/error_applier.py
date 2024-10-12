@@ -31,15 +31,17 @@ class ErrorApplier:
                 obj.data.polygons[face.index].material_index = len(obj.data.materials) - 1
         
         
-        if error_type == 1: # Generating chamfer on a random edge
+        if error_type == 1: # Generating chamfer on a random edge, for circular disk surfaces
             def cutter_cube():#Generates a cube to the desired spot
-                r = 0.25 + random.randrange(3, 10)/100
+                bpy.context.view_layer.objects.active = obj
+                bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+                z_location = obj.dimensions.z/2
+                r = 0.5 + random.randrange(5, 13)/100
                 rot_angle = math.radians(random.randrange(45,90))
-                bpy.ops.mesh.primitive_cube_add(size = 1, location = (r*math.cos(rot_angle),r*math.sin(rot_angle),0.5))
+                bpy.ops.mesh.primitive_cube_add(size = 1, location = (r*math.cos(rot_angle),r*math.sin(rot_angle),z_location ))
                 cube = bpy.context.active_object
-                cube.scale.x *=0.5
+                cube.scale.x *=0.4
                 cube.scale.z *=0.25
-                cube.location.z += cube.dimensions.z/8.0
                 cut_angle = 45 + random.randrange(-15, 15)
                 cube.rotation_euler.y = math.radians(cut_angle)
                 cube.rotation_euler.z = rot_angle
@@ -47,7 +49,6 @@ class ErrorApplier:
                 return cube
             
             cube = cutter_cube()
-            
             bpy.context.view_layer.objects.active = obj
             
             self.boolean_diff(obj, cube)
@@ -57,14 +58,17 @@ class ErrorApplier:
 
         if error_type == 2: # Generating a V shaped cut on one of the surfaces
             def cutter_cube():#Generates a cube to the desired spot
-                rot_angle = math.radians(random.randrange(0,91))
-                bpy.ops.mesh.primitive_cube_add(size = 0.5, location = (0,0,0.5))
+                bpy.context.view_layer.objects.active = obj
+                bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+                z_location = obj.dimensions.z/2
+                rot_angle = math.radians(random.randrange(0,90))
+                bpy.ops.mesh.primitive_cube_add(size = 0.5, location = (0,0,z_location))
                 cube = bpy.context.active_object
                 cube.location.z += cube.dimensions.z * random.randrange(63,69)/100
-                cube.location.x += random.randrange(0,20)/100
+                cube.location.x += random.randrange(0,45)/100
                 cube.rotation_euler.y = math.radians(45)
                 cube.rotation_euler.z = rot_angle
-                cube.scale.y *= 2
+                cube.scale.y *= 10
                 bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
                 return cube
 
@@ -73,8 +77,59 @@ class ErrorApplier:
 
             self.boolean_diff(obj, cube)
             bpy.data.objects.remove(cube)
+
             self.rotate_obj(obj)
 
+        if error_type == 3: #use only to generate a champfer into a cube
+            def cutter_cube():#Generates a cube to the desired spot
+                bpy.context.view_layer.objects.active = obj
+                bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+                z_location = obj.dimensions.z/2
+                r = 0.5 + random.randrange(5, 13)/100
+                bpy.ops.mesh.primitive_cube_add(size = 1, location = (r,0,z_location ))
+                cube = bpy.context.active_object
+                cube.scale.x *=0.5
+                cube.scale.z *=0.25
+                cube.scale.y *= 2
+                cut_angle = 45 + random.randrange(-15, 15)
+                cube.rotation_euler.y = math.radians(cut_angle)
+                bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+                return cube
+            
+            cube = cutter_cube()
+            bpy.context.view_layer.objects.active = obj
+
+            self.boolean_diff(obj, cube)
+            bpy.data.objects.remove(cube)
+            
+            self.rotate_obj(obj)
+        
+        if error_type == 4: #creates a V shaped cut on the surface of a sphere
+            def cutter_cube():#Generates a cube to the desired spot
+                bpy.context.view_layer.objects.active = obj
+                bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+                z_location = obj.dimensions.z/2
+                rot_angle = math.radians(random.randrange(0,90))
+                bpy.ops.mesh.primitive_cube_add(size = 0.5, location = (0,0,z_location))
+                cube = bpy.context.active_object
+                cube.location.z += cube.dimensions.z * random.randrange(63,70)/100
+                cube.rotation_euler.y = math.radians(45)
+                cube.rotation_euler.z = rot_angle
+                cube.scale.y *= 10
+                bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+                return cube
+
+            cube = cutter_cube()
+            bpy.context.view_layer.objects.active = obj
+
+            self.boolean_diff(obj, cube)
+            bpy.data.objects.remove(cube)
+
+            obj.rotation_euler.x = math.radians(random.randrange(0,360))
+            obj.rotation_euler.y = math.radians(random.randrange(0,360))
+            obj.rotation_euler.z = math.radians(random.randrange(0,360))
+            obj.ops.object.transform_apply(location=False, rotation=True, scale=False)
+            
         else:
             print("Unsupported error type.")
             return None
