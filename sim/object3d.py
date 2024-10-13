@@ -4,17 +4,20 @@ import math
 from modules.object_generator import ObjectGenerator
 from modules.texture_applier import TextureApplier
 from modules.error_applier import ErrorApplier
+from modules.add_light import AddLight
 
 class Object3D:
-    def __init__(self, object_type, object_error, texture_type, render_path):
+    def __init__(self, object_type, object_error,  render_path, texture_type = 0 , lighting_type = 0):
         self.object_type = object_type
         self.object_error = object_error
         self.texture_type = texture_type
         self.render_path = render_path
+        self.lighting_type = lighting_type
         self.object_generator = ObjectGenerator()
         self.texture_applier = TextureApplier()
         self.error_applier = ErrorApplier()
-
+        self.add_light = AddLight()
+        
     def place_object_rnd(self, error_range):
         # clear all
         bpy.ops.object.select_all(action='SELECT')
@@ -56,7 +59,8 @@ class Object3D:
 
         # Generate error on the object
         self.error_applier.apply_error(obj, self.object_error)
-
+        #add HDRI map
+        self.add_light.add_light(self.lighting_type)
         # Render the image
         bpy.context.scene.render.filepath = f"{self.render_path}/image_{render_num}.png"
         bpy.context.scene.render.resolution_x = res_x
