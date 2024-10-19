@@ -147,7 +147,7 @@ class ErrorApplier:
         """Applies random rotation to the object."""
         obj.rotation_euler.x = math.radians(random.randrange(0, 360, 90))
         obj.rotation_euler.y = math.radians(random.randrange(0, 360, 90))
-        obj.rotation_euler.z = math.radians(random.randrange(0, 360))
+        obj.rotation_euler.z = math.radians(90)
         bpy.context.view_layer.objects.active = obj
         bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
     

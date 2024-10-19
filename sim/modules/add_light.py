@@ -1,3 +1,4 @@
+import os
 import bpy
 
 
@@ -41,9 +42,17 @@ class AddLight():
             # Remove existing HDRI maps before adding a new one
             self.remove_existing_hdri()
             # Call HDRI map addition logic
-            self.add_hdri(r"C:\Agile-Manufacturing-TDK-\sim\modules\hdri_maps\bank_vault_8k.hdr")  # Update with actual path to HDRI file
+            self.add_hdri(r"C:\Users\bilma\Documents\GitHub\Agile-Manufacturing-TDK-\sim\modules\hdri_maps\bank_vault_8k.hdr")# Update with actual path to HDRI file
 
     def add_hdri(self, hdri_path):
+        # Check current working directory
+        print("Current working directory:", os.getcwd())
+
+        # Check if HDRI path exists
+        if not os.path.exists(hdri_path):
+            print(f"Error: HDRI file does not exist at path: {hdri_path}")
+            return
+
         # Set the rendering engine to 'CYCLES'
         bpy.context.scene.render.engine = 'CYCLES'
 
@@ -61,7 +70,13 @@ class AddLight():
 
         # Add an environment texture node and set the HDRI path
         env_texture_node = nodes.new(type='ShaderNodeTexEnvironment')
-        env_texture_node.image = bpy.data.images.load(hdri_path)
+        
+        try:
+            env_texture_node.image = bpy.data.images.load(hdri_path)
+            print(f"Successfully loaded HDRI from: {hdri_path}")
+        except Exception as e:
+            print(f"Failed to load HDRI image: {e}")
+            return
 
         # Connect the environment texture to the background shader
         links.new(env_texture_node.outputs['Color'], background_node.inputs['Color'])
@@ -81,5 +96,4 @@ class AddLight():
                     if space.type == 'VIEW_3D':
                         space.shading.use_scene_world_render = False
                         break
-
                 
