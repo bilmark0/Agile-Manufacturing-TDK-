@@ -1,7 +1,6 @@
 import bpy
 import random
 import math
-from mathutils import Vector
 import os
 import sys
 sys.path.append("./modules")
@@ -74,7 +73,7 @@ class Object3D:
         obj = self.object_generator.create_object(self.object_type)
         if obj is not None:
             obj.location = placement
-            bpy.context.active_object.rotation_euler[2] = math.radians(random.randint(0, 179))
+            #bpy.context.active_object.rotation_euler[2] = math.radians(random.randint(0, 179))
             return obj
         else:
             return None

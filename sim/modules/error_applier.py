@@ -78,7 +78,10 @@ class ErrorApplier:
             self.boolean_diff(obj, cube)
             bpy.data.objects.remove(cube)
 
-            self.rotate_obj(obj)
+            obj.rotation_euler.x = math.radians(random.randrange(-90, 180, 90))
+            obj.rotation_euler.z = math.radians(random.randrange(-155,-25)) 
+            bpy.context.view_layer.objects.active = obj
+            bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 
         if error_type == 3: #use only to generate a champfer into a cube
             def cutter_cube():#Generates a cube to the desired spot
@@ -102,7 +105,11 @@ class ErrorApplier:
             self.boolean_diff(obj, cube)
             bpy.data.objects.remove(cube)
             
-            self.rotate_obj(obj)
+            """Applies random rotation to the object."""
+            obj.rotation_euler.x = math.radians(random.randrange(0, 360, 90))
+            obj.rotation_euler.z = math.radians(random.randrange(-155,-25)) 
+            bpy.context.view_layer.objects.active = obj
+            bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
         
         if error_type == 4: #creates a V shaped cut on the surface of a sphere
             def cutter_cube():#Generates a cube to the desired spot
@@ -146,8 +153,7 @@ class ErrorApplier:
     def rotate_obj(self, obj):
         """Applies random rotation to the object."""
         obj.rotation_euler.x = math.radians(random.randrange(0, 360, 90))
-        obj.rotation_euler.y = math.radians(random.randrange(0, 360, 90))
-        obj.rotation_euler.z = math.radians(90)
+        obj.rotation_euler.z = math.radians(random.randrange(-155,-25)) 
         bpy.context.view_layer.objects.active = obj
         bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
     
