@@ -96,7 +96,7 @@ class Object3D:
         self.add_light.add_light(self.lighting_type)
 
         # Render the image
-        bpy.context.scene.render.filepath = f"{self.render_path}/image_{render_num}.png"
+        bpy.context.scene.render.filepath = f"{self.render_path}/image_{render_num}_{self.object_error}_{self.object_type}.png"
         bpy.context.scene.render.resolution_x = res_x
         bpy.context.scene.render.resolution_y = res_y
 
