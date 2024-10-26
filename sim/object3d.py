@@ -54,29 +54,35 @@ class Object3D:
 
         # Set up the camera
         self.setup_camera()
-
-        """Randomly place the object within the scene."""
-        placement = random.randint(-error_range, error_range), random.randint(-error_range, error_range), 0
+        
+        # Define the plane's position
+        plane_position = random.randint(-error_range, error_range), random.randint(-error_range, error_range), -1
         
         # Create a new plane
         bpy.ops.mesh.primitive_plane_add(size=80)  # Adjust size as needed
         plane = bpy.context.selected_objects[0]
         plane.name = "Plane"
-        plane.location = (placement[0], placement[1], placement[2] - 1)
+        plane.location = plane_position
 
         # Create and assign white material to the plane
         plane_material = bpy.data.materials.new(name="PlaneMaterial")
         plane_material.diffuse_color = (1, 1, 1, 1)  # White color (RGBA)
         plane.data.materials.append(plane_material)
 
-        # Create and place the object
+        # Create the object
         obj = self.object_generator.create_object(self.object_type)
         if obj is not None:
-            obj.location = placement
-            #bpy.context.active_object.rotation_euler[2] = math.radians(random.randint(0, 179))
+            # Calculate the object's bounding box height
+            obj_bottom_z = min((obj.matrix_world @ v.co).z for v in obj.data.vertices)
+            
+            # Position the object on top of the plane by adjusting the Z-coordinate
+            obj.location = (plane_position[0], plane_position[1], plane_position[2] - obj_bottom_z + 0.01)
+            
             return obj
         else:
             return None
+
+
 
     def render_image(self, render_num, res_x, res_y):
         """Render a single image."""

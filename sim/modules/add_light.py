@@ -42,7 +42,9 @@ class AddLight():
             # Remove existing HDRI maps before adding a new one
             self.remove_existing_hdri()
             # Call HDRI map addition logic
-            self.add_hdri(r"C:\Users\bilma\Documents\GitHub\Agile-Manufacturing-TDK-\sim\modules\hdri_maps\bank_vault_8k.hdr")# Update with actual path to HDRI file
+            hdri_path=r".\modules\hdri_maps\bank_vault_8k.hdr"
+            hdri_path_n = os.path.abspath(hdri_path)
+            self.add_hdri(hdri_path_n)# Update with actual path to HDRI file
 
     def add_hdri(self, hdri_path):
         # Check current working directory
