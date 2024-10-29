@@ -92,12 +92,11 @@ class ErrorApplier:
             self.boolean_diff(obj, cube)
             bpy.data.objects.remove(cube)
             
-            """Applies random rotation to the object."""
-            obj.rotation_euler.x = math.radians(random.randrange(0, 360, 90))
-            obj.rotation_euler.z = math.radians(random.randrange(-155,-25)) 
+            obj.rotation_euler.x = math.radians(random.randrange(-90,180,90))
+            obj.rotation_euler.z = math.radians(random.randrange(-70,-19) + random.randrange(-90,90,90)) 
             bpy.context.view_layer.objects.active = obj
             bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-        
+
         if error_type == 4: #creates a V shaped cut on the surface of a sphere
             def cutter_cube():#Generates a cube to the desired spot
                 bpy.context.view_layer.objects.active = obj
