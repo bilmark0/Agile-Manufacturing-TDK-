@@ -1,8 +1,9 @@
 import subprocess
 import sys
-from typing import Optional
-import zipfile
+from typing import Optional, List
 import os
+import shutil
+from google.colab import files 
 
 class DependencyManager:
     def __init__(self, requirements_file: str = 'requirements.txt'):
@@ -34,12 +35,7 @@ class DependencyManager:
             print(f"Error occurred while installing dependencies: {e}")
 
     def list_installed_packages(self) -> None:
-        """
-        Lists currently installed packages in the environment.
-
-        Returns:
-        - None
-        """
+        """Lists currently installed packages in the environment."""
         try:
             subprocess.check_call([sys.executable, '-m', 'pip', 'list'])
         except subprocess.CalledProcessError as e:
@@ -61,36 +57,70 @@ class DependencyManager:
             print(f"Environment frozen successfully to {output_file}.")
         except subprocess.CalledProcessError as e:
             print(f"Error occurred while freezing environment: {e}")
-    
-    def kaggle_download(self):
-        # Upload the file
+
+    def kaggle_download(self, datasets: Optional[List[str]] = None, output_folder: str = 'data', paths_file: str = 'dataset_paths.txt'):
+        """
+        Downloads multiple datasets from Kaggle and organizes them.
+        ...
+        """
+        # Create output folder if it doesn't exist
+        os.makedirs(output_folder, exist_ok=True)
+
+        # Upload the Kaggle API key
         uploaded = files.upload()
-
-        # Get the actual file name from the dictionary
         file_name = list(uploaded.keys())[0]
-        !mkdir ~/.kaggle
-        !cp kaggle.json ~/.kaggle/
-        !chmod 600 ~/.kaggle/kaggle.json
 
-        # Save the API key securely without displaying it
-        with open('/root/.kaggle/kaggle.json', 'wb') as f:
+        # Set up Kaggle API key
+        kaggle_dir = '/root/.kaggle'
+        os.makedirs(kaggle_dir, exist_ok=True)
+        with open(os.path.join(kaggle_dir, 'kaggle.json'), 'wb') as f:
             f.write(uploaded[file_name])
+        os.chmod(os.path.join(kaggle_dir, 'kaggle.json'), 0o600)
 
-        # Set permissions
-        !chmod 600 /root/.kaggle/kaggle.json
+        # Initialize dataset paths
+        dataset_paths = []
         
-        #download data
-        !kaggle competitions download -c isic-2024-challenge
-        # Path to your zip file and extract location
-        zip_file_path = 'isic-2024-challenge.zip'
-        extract_to_path = 'data'
+        # Load existing dataset paths from the paths file
+        if os.path.exists(paths_file):
+            with open(paths_file, 'r') as f:
+                dataset_paths = [line.strip() for line in f.readlines()]
 
-        # Extracting the zip file
-        with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
-            zip_ref.extractall(extract_to_path)
-            print("Extraction completed.")
+        # If no datasets are provided, load from the dataset_paths.txt
+        if datasets is None:
+            datasets = []
+            if os.path.exists(paths_file):
+                with open(paths_file, 'r') as f:
+                    datasets = [line.strip() for line in f.readlines()]
 
+            for dataset in datasets:
+                    try:
+                        # Download dataset
+                        print(f"Downloading dataset: {dataset}")
+                        subprocess.check_call(['kaggle', 'datasets', 'download', '-d', dataset, '-p', output_folder, '--unzip'])
+                        
+                        # Find the downloaded files
+                        downloaded_files = os.listdir(output_folder)
+                        if downloaded_files:
+                            first_file_name = downloaded_files[0]  # Get the first downloaded file
+                            folder_name = first_file_name[-3:]  # Last 3 digits of the file name
+                            designated_folder = os.path.join(output_folder, folder_name)
 
+                            # Create a designated folder
+                            os.makedirs(designated_folder, exist_ok=True)
 
+                            # Move downloaded files to the designated folder
+                            for file in downloaded_files:
+                                shutil.move(os.path.join(output_folder, file), os.path.join(designated_folder, file))
+                            
+                            # Store the path of the designated folder
+                            dataset_paths.append(designated_folder)
+                            print(f"Dataset downloaded and moved to: {designated_folder}")
 
+                    except subprocess.CalledProcessError as e:
+                        print(f"Error occurred while downloading {dataset}: {e}")
 
+            # Save dataset paths to a file
+            with open(paths_file, 'w') as f:
+                for path in dataset_paths:
+                    f.write(path + '\n')
+            print(f"Dataset paths saved to {paths_file}.")
