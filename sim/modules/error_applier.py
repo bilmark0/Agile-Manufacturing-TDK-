@@ -6,30 +6,8 @@ class ErrorApplier:
 
     def apply_error(self, obj, error_type):
         """Applies an error to the object based on the specified error type."""
-        if error_type == 0:  # Example: Coloring random faces
-            polygons_list = list(obj.data.polygons)
-
-            red_material = bpy.data.materials.get("Red") or bpy.data.materials.new(name="Red")
-            red_material.diffuse_color = (1, 0, 0, 1)
-
-            blue_material = bpy.data.materials.get("Blue") or bpy.data.materials.new(name="Blue")
-            blue_material.diffuse_color = (0, 0, 1, 1)
-
-            obj.data.materials.clear()
-
-            # Randomly assign materials to faces
-            selected_faces_red = random.sample(polygons_list, min(3, len(polygons_list)))
-            remaining_faces = [f for f in polygons_list if f not in selected_faces_red]
-            selected_faces_blue = random.sample(remaining_faces, min(3, len(remaining_faces)))
-
-            for face in selected_faces_red:
-                obj.data.materials.append(red_material)
-                obj.data.polygons[face.index].material_index = len(obj.data.materials) - 1
-
-            for face in selected_faces_blue:
-                obj.data.materials.append(blue_material)
-                obj.data.polygons[face.index].material_index = len(obj.data.materials) - 1
-        
+        if error_type == 0:  # No errors applied
+            self.rotate_obj(obj)
         
         if error_type == 1: # Generating chamfer on a random edge, for circular disk surfaces
             def cutter_cube():#Generates a cube to the desired spot
@@ -61,11 +39,11 @@ class ErrorApplier:
                 bpy.context.view_layer.objects.active = obj
                 bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
                 z_location = obj.dimensions.z/2
-                rot_angle = math.radians(random.randrange(0,90))
+                rot_angle = math.radians(random.randrange(0,180))
                 bpy.ops.mesh.primitive_cube_add(size = 0.5, location = (0,0,z_location))
                 cube = bpy.context.active_object
                 cube.location.z += cube.dimensions.z * random.randrange(63,69)/100
-                cube.location.x += random.randrange(0,45)/100
+                cube.location.x += random.randrange(-45,45)/100
                 cube.rotation_euler.y = math.radians(45)
                 cube.rotation_euler.z = rot_angle
                 cube.scale.y *= 10
@@ -78,8 +56,17 @@ class ErrorApplier:
             self.boolean_diff(obj, cube)
             bpy.data.objects.remove(cube)
 
-            obj.rotation_euler.x = math.radians(random.randrange(-90, 180, 90))
-            obj.rotation_euler.z = math.radians(random.randrange(-155,-25)) 
+            rand_rot = random.randint(0,3)
+            if rand_rot == 0:
+                obj.rotation_euler.x = math.radians(0)
+                obj.rotation_euler.y = math.radians(0)
+            if rand_rot == 1:
+                obj.rotation_euler.x = math.radians(90)
+                obj.rotation_euler.y = math.radians(0)
+            if rand_rot == 2:
+                obj.rotation_euler.x = math.radians(0)
+                obj.rotation_euler.y = math.radians(90)
+            obj.rotation_euler.z = math.radians(random.randrange(-70,-19))
             bpy.context.view_layer.objects.active = obj
             bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 
