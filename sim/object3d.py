@@ -56,7 +56,7 @@ class Object3D:
         self.setup_camera()
         
         # Define the plane's position
-        plane_position = random.randint(-error_range, error_range), random.randint(-error_range, error_range), -1
+        plane_position = random.randint(-error_range, error_range), random.randint(-error_range, error_range), -0.5
         
         # Create a new plane
         bpy.ops.mesh.primitive_plane_add(size=80)  # Adjust size as needed
@@ -71,16 +71,8 @@ class Object3D:
 
         # Create the object
         obj = self.object_generator.create_object(self.object_type)
-        if obj is not None:
-            # Calculate the object's bounding box height
-            obj_bottom_z = min((obj.matrix_world @ v.co).z for v in obj.data.vertices)
-            
-            # Position the object on top of the plane by adjusting the Z-coordinate
-            obj.location = (plane_position[0], plane_position[1], plane_position[2] - obj_bottom_z + 0.01)
-            
-            return obj
-        else:
-            return None
+        return obj
+
 
 
 

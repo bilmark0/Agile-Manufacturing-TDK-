@@ -9,7 +9,7 @@ OBJECT_TEXTURE_TYPE = 1 #define different object textures
 OBJECT_LIGHTING_TYPE = 3 #define lighting type for the images
 ERROR_TYPE = 3  # Define different error types
 NUM_IMAGES = 5
-FILE_PATH = r'C:\temp'
+FILE_PATH = r'C:\Users\bilma\Documents\Robot TDK\Dump'
 RES_X = 380
 RES_Y = 240
 
