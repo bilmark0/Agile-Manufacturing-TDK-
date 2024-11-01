@@ -1,2 +1,3 @@
-markbilszky/agile-manufacturing-tdk/Reference
-markbilszky/agile-manufacturing-tdk/error_2
+data/agile-manufacturing-tdk/References/Reference.zip
+data/agile-manufacturing-tdk/error_2/error_2.zip
+data/agile-manufacturing-tdk/error_3/tdk2.zip
